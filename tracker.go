@@ -53,8 +53,7 @@ func (t *Tracker) AddEntry(hash []byte) error {
 
 func (t *Tracker) HasEntry(hash []byte) (bool, error) {
 	txn := t.kv.NewTransaction(true)
-	var item badger.Item
-	&item, err := txn.Get(hash)
+	item, err := txn.Get(hash)
 	if err != nil {
 		return false, err
 	}
