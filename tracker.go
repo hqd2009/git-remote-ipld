@@ -1,14 +1,14 @@
 package main
 
 import (
-	badger "github.com/dgraph-io/badger"
+	"github.com/dgraph-io/badger"
 	"path"
 	"os"
 )
 
 //Tracker tracks which hashes are published in IPLD
 type Tracker struct {
-	kv *badger.KV
+	kv *badger.DB
 }
 
 func NewTracker(gitPath string) (*Tracker, error) {
@@ -22,7 +22,7 @@ func NewTracker(gitPath string) (*Tracker, error) {
 	opt.Dir = ipldDir
 	opt.ValueDir = ipldDir
 
-	kv, err := badger.NewKV(&opt)
+	kv, err := badger.Open(&opt)
 	if err != nil {
 		return nil, err
 	}
@@ -33,7 +33,7 @@ func NewTracker(gitPath string) (*Tracker, error) {
 }
 
 func (t *Tracker) GetRef(refName string) ([]byte, error) {
-	var it badger.KVItem
+	var it badger.Item
 	err := t.kv.Get([]byte(refName), &it)
 	if err != nil {
 		return nil, err
@@ -50,7 +50,7 @@ func (t *Tracker) AddEntry(hash []byte) error {
 }
 
 func (t *Tracker) HasEntry(hash []byte) (bool, error) {
-	var item badger.KVItem
+	var item badger.Item
 	err := t.kv.Get(hash, &item)
 	if err != nil {
 		return false, err
