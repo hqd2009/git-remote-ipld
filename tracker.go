@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/dgraph-io/badger"
+	badger "github.com/dgraph-io/badger"
 	"path"
 	"os"
 )
