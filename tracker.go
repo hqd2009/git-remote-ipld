@@ -35,6 +35,7 @@ func NewTracker(gitPath string) (*Tracker, error) {
 func (t *Tracker) GetRef(refName string) ([]byte, error) {
 	txn := t.kv.NewTransaction(true)
 	var it badger.Item
+	var err error
 	&it, err := txn.Get([]byte(refName))
 	if err != nil {
 		return nil, err
