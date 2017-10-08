@@ -34,8 +34,8 @@ func NewTracker(gitPath string) (*Tracker, error) {
 
 func (t *Tracker) GetRef(refName string) ([]byte, error) {
 	txn := t.kv.NewTransaction(true)
-	var it badgery.Item
-	it, err := t.kv.Get([]byte(refName))
+	var it badger.Item
+	it, err := txn.Get([]byte(refName))
 	if err != nil {
 		return nil, err
 	}
@@ -43,16 +43,19 @@ func (t *Tracker) GetRef(refName string) ([]byte, error) {
 }
 
 func (t *Tracker) SetRef(refName string, hash []byte) error {
-	return t.kv.set([]byte(refName), hash, 0)
+	txn := kv.NewTransaction(true)
+	return txn.Set([]byte(refName), hash, 0)
 }
 
 func (t *Tracker) AddEntry(hash []byte) error {
-	return t.kv.set(hash, []byte{1}, 0)
+	txn := kv.NewTransaction(true)
+	return txn.Set(hash, []byte{1}, 0)
 }
 
 func (t *Tracker) HasEntry(hash []byte) (bool, error) {
+	txn := kv.NewTransaction(true)
 	var item badger.Item
-	err := t.kv.get(hash, &item)
+	item, err := txn.Get(hash)
 	if err != nil {
 		return false, err
 	}
