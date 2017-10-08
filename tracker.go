@@ -38,7 +38,8 @@ func (t *Tracker) GetRef(refName string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	return syncBytes(it.Value)
+	return it.Value()
+	//return syncBytes(it.Value)
 }
 
 func (t *Tracker) SetRef(refName string, hash []byte) error {
@@ -57,8 +58,8 @@ func (t *Tracker) HasEntry(hash []byte) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-
-	val, err := syncBytes(item.Value)
+        val, err := item.Value()
+	//val, err := syncBytes(item.Value)
 	return val != nil, err
 }
 
